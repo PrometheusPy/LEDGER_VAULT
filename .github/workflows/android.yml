@@ -1,0 +1,60 @@
+name: Build Android APK
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      # Install dependencies including the icon generator
+      - name: Install Dependencies
+        run: npm install && npm i -D @capacitor/assets
+
+      - name: Build Web Assets
+        run: npm run build
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+
+      # Creates the android folder from scratch
+      - name: Initialize Android Platform
+        run: npx cap add android
+
+      # Generates icons from resources/icon.png
+      - name: Generate App Icons
+        run: npx cap-assets generate --iconOnly --android
+
+      - name: Build Debug APK
+        run: |
+          cd android
+          chmod +x gradlew
+          ./gradlew assembleDebug
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: App-Debug
+          path: android/app/build/outputs/apk/debug/app-debug.apk
+
+
