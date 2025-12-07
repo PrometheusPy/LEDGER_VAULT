@@ -41,9 +41,10 @@ jobs:
       - name: Initialize Android Platform
         run: npx cap add android
 
-      # Generates icons from resources/icon.png
+      # --- FIXED COMMAND HERE ---
+      # Changed 'cap-assets' to 'capacitor-assets'
       - name: Generate App Icons
-        run: npx cap-assets generate --iconOnly --android
+        run: npx capacitor-assets generate --iconOnly --android
 
       - name: Build Debug APK
         run: |
