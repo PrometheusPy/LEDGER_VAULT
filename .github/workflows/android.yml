@@ -21,9 +21,9 @@ jobs:
         with:
           node-version: '18'
 
-      # Install dependencies including the icon generator
+      # Removed '@capacitor/assets' since we use default icons
       - name: Install Dependencies
-        run: npm install && npm i -D @capacitor/assets
+        run: npm install
 
       - name: Build Web Assets
         run: npm run build
@@ -37,14 +37,12 @@ jobs:
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
 
-      # Creates the android folder from scratch
+      # Creates the android folder (with default icons inside)
       - name: Initialize Android Platform
         run: npx cap add android
 
-      # --- FIXED COMMAND HERE ---
-      # Changed 'cap-assets' to 'capacitor-assets'
-      - name: Generate App Icons
-        run: npx capacitor-assets generate --iconOnly --android
+      # REMOVED: "Generate App Icons" step.
+      # The build will now use the default resources created by the step above.
 
       - name: Build Debug APK
         run: |
